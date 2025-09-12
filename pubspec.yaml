@@ -21,6 +21,8 @@ dependencies:
   dio: ^5.9.0
   equatable: ^2.0.7
   dartz: ^0.10.1
+  flutter_native_splash: ^2.4.6
+  lottie: ^3.3.2
 
 dev_dependencies:
   flutter_test:
@@ -30,3 +32,15 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/lottie/
+
+flutter_native_splash:
+  color: "#ECF3FA"
+  image: assets/images/logo.png
+
+  android_12:
+    color: "#ECF3FA"
+    image: assets/images/logo.png
+  web:
+    color: "#F9F9F9"
+    image: assets/images/logo.png

@@ -29,6 +29,8 @@ const teal300 = Color(0xFF93E1DD);
 const teal200 = Color(0xFFA2F0EC);
 
 // Primary
+const primaryGradientTop = Color(0xFF7DC1FF);
+const primaryGradientBottom = Color(0xFF278CEA);
 const primary800 = Color(0xFF2B8FEB);
 const primary700 = Color(0xFF4A9BE5);
 const primary600 = Color(0xFF67ACEB);
