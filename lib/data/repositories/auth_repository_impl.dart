@@ -38,6 +38,9 @@ class AuthRepositoryImpl implements AuthRepository {
     } on SocketException catch (e) {
       return Left(ConnectionFailure(e.toString()));
     } on DioException catch (e) {
+      if (e.response?.statusCode == 400) {
+        return Left(ServerFailure('Invalid email or password'));
+      }
       return Left(ServerFailure(e.toString()));
     }
   }

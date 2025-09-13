@@ -61,7 +61,7 @@ class ApiService {
     try {
       // content-type: application/x-www-form-urlencoded
       final response = await _dio.post(
-        'auth/token',
+        'auth/token/',
         data: {'username': username, 'password': password},
         options: Options(
           headers: {
@@ -104,7 +104,7 @@ class ApiService {
   Future<AggAssetByStatusResponse> getAggAssetByStatus() async {
     try {
       // content-type: application/json
-      final response = await _dio.get('assets/agg-asset-by-status');
+      final response = await _dio.get('home/agg-asset-by-status/');
 
       if (response.statusCode == 200) {
         return AggAssetByStatusResponse.fromJson(response.data);
@@ -121,7 +121,7 @@ class ApiService {
   Future<AggAssetByLocationResponse> getAggAssetByLocation() async {
     try {
       // content-type: application/json
-      final response = await _dio.get('assets/agg-asset-by-location');
+      final response = await _dio.get('home/agg-asset-by-location/');
 
       if (response.statusCode == 200) {
         return AggAssetByLocationResponse.fromJson(response.data);
@@ -139,7 +139,7 @@ class ApiService {
   Future<GeneralResponse> getAllLocations() async {
     try {
       // content-type: application/json
-      final response = await _dio.get('locations');
+      final response = await _dio.get('locations/');
 
       if (response.statusCode == 200) {
         return GeneralResponse.fromJson(response.data);
@@ -157,7 +157,7 @@ class ApiService {
   Future<GeneralResponse> getAllStatuses() async {
     try {
       // content-type: application/json
-      final response = await _dio.get('status');
+      final response = await _dio.get('status/');
 
       if (response.statusCode == 200) {
         return GeneralResponse.fromJson(response.data);
@@ -176,7 +176,7 @@ class ApiService {
     try {
       // content-type: application/json
       final response = await _dio.get(
-        'assets?page=$page&size=$size${query != null ? '&query=$query' : ''}',
+        'asset/?page=$page&size=$size${query != null ? '&search=$query' : ''}',
       );
 
       if (response.statusCode == 200) {
@@ -199,7 +199,7 @@ class ApiService {
     try {
       // content-type: application/json
       final response = await _dio.post(
-        'asset',
+        'asset/',
         data: {'name': name, 'status_id': statusId, 'location_id': locationId},
       );
 

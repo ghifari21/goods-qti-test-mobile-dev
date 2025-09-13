@@ -23,6 +23,8 @@ import 'package:goods/domain/usecases/logout_use_case.dart';
 import 'package:goods/domain/usecases/search_assets_use_case.dart';
 import 'package:goods/domain/usecases/update_asset_use_case.dart';
 import 'package:goods/helper/go_router_helper.dart';
+import 'package:goods/ui/blocs/asset/asset_screen_bloc.dart';
+import 'package:goods/ui/blocs/home/home_screen_bloc.dart';
 import 'package:goods/ui/blocs/login/login_screen_bloc.dart';
 import 'package:goods/utils/auth_interceptor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,6 +50,7 @@ Future<void> setupLocator() async {
         connectTimeout: Duration(seconds: 30),
         receiveTimeout: Duration(seconds: 30),
         contentType: Headers.jsonContentType,
+        validateStatus: (_) => true,
       ),
     );
 
@@ -89,4 +92,18 @@ Future<void> setupLocator() async {
 
   // blocs
   getIt.registerFactory(() => LoginScreenBloc(useCase: getIt()));
+  getIt.registerFactory(
+    () => HomeScreenBloc(
+      getAggAssetByLocationUseCase: getIt(),
+      getAggAssetByStatusUseCase: getIt(),
+      getUserDetailsUseCase: getIt(),
+      logoutUseCase: getIt(),
+    ),
+  );
+  getIt.registerFactory(
+    () => AssetScreenBloc(
+      getAllAssetsUseCase: getIt(),
+      searchAssetsUseCase: getIt(),
+    ),
+  );
 }

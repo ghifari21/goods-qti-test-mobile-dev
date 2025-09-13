@@ -14,15 +14,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        if (constraints.maxWidth < 600) {
-          return const LoginScreenMobile();
-        } else {
-          return const LoginScreenWeb();
-        }
-      },
-    );
+    return LoginScreenMobile();
   }
 }
 
@@ -64,6 +56,7 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
             if (state is LoginScreenSuccess) {
               context.goNamed(AppRoute.home.name);
             } else if (state is LoginScreenError) {
+              _passwordController.clear();
               showErrorSnackBar(context, state.message);
             }
           },

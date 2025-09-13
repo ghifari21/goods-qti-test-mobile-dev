@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:goods/di/injection.dart';
 import 'package:goods/helper/go_router_helper.dart';
+import 'package:goods/ui/blocs/asset/asset_screen_bloc.dart';
+import 'package:goods/ui/blocs/home/home_screen_bloc.dart';
 import 'package:goods/ui/blocs/login/login_screen_bloc.dart';
 import 'package:goods/ui/theme/colors.dart';
 
@@ -13,7 +15,11 @@ void main() async {
 
   runApp(
     MultiBlocProvider(
-      providers: [BlocProvider(create: (context) => getIt<LoginScreenBloc>())],
+      providers: [
+        BlocProvider(create: (context) => getIt<LoginScreenBloc>()),
+        BlocProvider(create: (context) => getIt<HomeScreenBloc>()),
+        BlocProvider(create: (context) => getIt<AssetScreenBloc>()),
+      ],
       child: MyApp(),
     ),
   );
@@ -31,7 +37,6 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: primary800),
       ),
       routerConfig: getIt<GoRouterHelper>().goRouter,
-      // home: LoginScreen(),
     );
   }
 }
