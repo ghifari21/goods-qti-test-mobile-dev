@@ -7,7 +7,7 @@ import 'package:goods/ui/screens/login_screen.dart';
 import 'package:goods/ui/screens/splash_screen.dart';
 import 'package:goods/ui/screens/unknown_screen.dart';
 
-enum AppRoute { splash, login, home, inputAsset, listAsset, editAsset }
+enum AppRoute { splash, login, home, inputAsset, editAsset }
 
 class GoRouterHelper {
   static final GlobalKey<NavigatorState> parentNavigatorKey =
@@ -20,13 +20,19 @@ class GoRouterHelper {
     initialLocation: '/splash',
     errorBuilder: (context, state) => const UnknownScreen(),
     redirect: (BuildContext context, GoRouterState state) async {
-      final bool isLoggedIn =
-          getIt<SharedPreferencesService>().getUserToken() != '';
-      final String location = state.matchedLocation;
+      final prefs = getIt<SharedPreferencesService>();
+      final bool isLoggedIn = prefs.getUserToken().isNotEmpty;
+      final bool hasRefreshToken = prefs.getRefreshToken().isNotEmpty;
 
+      final String location = state.matchedLocation;
       final bool isAuthRoute = location == '/login';
-      if (!isLoggedIn && location != '/splash' && !isAuthRoute) {
-        return '/login';
+      final bool isSplashRoute = location == '/splash';
+
+      if (!isLoggedIn && !isSplashRoute) {
+        if (hasRefreshToken) {
+          return '/splash';
+        }
+        return isAuthRoute ? null : '/login';
       }
 
       if (isLoggedIn && isAuthRoute) {
@@ -50,6 +56,7 @@ class GoRouterHelper {
         path: '/home',
         name: AppRoute.home.name,
         builder: (context, state) => HomeScreen(),
+        routes: [],
       ),
     ],
   );

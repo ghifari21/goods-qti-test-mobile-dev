@@ -5,6 +5,7 @@ import 'package:goods/helper/go_router_helper.dart';
 import 'package:goods/ui/blocs/asset/asset_screen_bloc.dart';
 import 'package:goods/ui/blocs/home/home_screen_bloc.dart';
 import 'package:goods/ui/blocs/login/login_screen_bloc.dart';
+import 'package:goods/ui/blocs/splash/splash_screen_bloc.dart';
 import 'package:goods/ui/theme/colors.dart';
 
 void main() async {
@@ -19,6 +20,7 @@ void main() async {
         BlocProvider(create: (context) => getIt<LoginScreenBloc>()),
         BlocProvider(create: (context) => getIt<HomeScreenBloc>()),
         BlocProvider(create: (context) => getIt<AssetScreenBloc>()),
+        BlocProvider(create: (context) => getIt<SplashScreenBloc>()),
       ],
       child: MyApp(),
     ),

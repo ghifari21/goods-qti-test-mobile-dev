@@ -26,6 +26,7 @@ import 'package:goods/helper/go_router_helper.dart';
 import 'package:goods/ui/blocs/asset/asset_screen_bloc.dart';
 import 'package:goods/ui/blocs/home/home_screen_bloc.dart';
 import 'package:goods/ui/blocs/login/login_screen_bloc.dart';
+import 'package:goods/ui/blocs/splash/splash_screen_bloc.dart';
 import 'package:goods/utils/auth_interceptor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -54,7 +55,9 @@ Future<void> setupLocator() async {
       ),
     );
 
-    dio.interceptors.add(AuthInterceptor(getIt<SharedPreferencesService>()));
+    dio.interceptors.add(
+      AuthInterceptor(getIt<SharedPreferencesService>(), dio),
+    );
 
     return dio;
   });
@@ -105,5 +108,8 @@ Future<void> setupLocator() async {
       getAllAssetsUseCase: getIt(),
       searchAssetsUseCase: getIt(),
     ),
+  );
+  getIt.registerFactory(
+    () => SplashScreenBloc(prefs: getIt(), generateToken: getIt()),
   );
 }
