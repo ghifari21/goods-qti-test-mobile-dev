@@ -119,7 +119,12 @@ class _AssetScreenState extends State<AssetScreen> {
               borderRadius: BorderRadius.circular(6.0),
               color: grey100,
             ),
-            child: _buildAssetList(),
+            child: RefreshIndicator(
+              onRefresh: () async {
+                context.read<AssetScreenBloc>().add(RefreshDataEvent());
+              },
+              child: _buildAssetList(),
+            ),
             constraints: BoxConstraints(maxHeight: 500),
           ),
           const SizedBox(height: 64.0),
@@ -131,7 +136,6 @@ class _AssetScreenState extends State<AssetScreen> {
   Widget _buildAssetList() {
     return BlocBuilder<AssetScreenBloc, AssetScreenState>(
       builder: (context, state) {
-        print('AssetScreenState: $state');
         switch (state.status) {
           case AssetStatus.failure:
             return Center(child: Text('Error: ${state.errorMessage}'));
@@ -208,7 +212,12 @@ class _AssetScreenState extends State<AssetScreen> {
           ),
 
           PrimaryIconButton(
-            onPressed: () {},
+            onPressed: () {
+              context.goNamed(
+                AppRoute.editAsset.name,
+                pathParameters: {'id': id},
+              );
+            },
             child: Icon(Icons.edit, color: grey100),
           ),
         ],

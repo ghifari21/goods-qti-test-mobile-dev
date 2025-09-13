@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:goods/domain/models/common_model.dart';
 import 'package:goods/ui/blocs/asset/asset_screen_bloc.dart';
-import 'package:goods/ui/blocs/input/input_asset_screen_bloc.dart';
+import 'package:goods/ui/blocs/edit/edit_asset_screen_bloc.dart';
 import 'package:goods/ui/screens/error_screen.dart';
 import 'package:goods/ui/theme/colors.dart';
 import 'package:goods/ui/theme/text_styles.dart';
 import 'package:goods/ui/widgets/autocomplete_text_form_field_widget.dart';
 import 'package:goods/ui/widgets/general_text_form_field_widget.dart';
 import 'package:goods/ui/widgets/primary_button_widget.dart';
+import 'package:goods/ui/widgets/secondary_button_widget.dart';
 import 'package:goods/utils/utils.dart';
 
-class InputAssetScreen extends StatefulWidget {
-  const InputAssetScreen({super.key});
+class EditAssetScreen extends StatefulWidget {
+  final String assetId;
+
+  const EditAssetScreen({super.key, required this.assetId});
 
   @override
-  State<InputAssetScreen> createState() => _InputAssetScreenState();
+  State<EditAssetScreen> createState() => _EditAssetScreenState();
 }
 
-class _InputAssetScreenState extends State<InputAssetScreen> {
+class _EditAssetScreenState extends State<EditAssetScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _assetNameController;
   late final TextEditingController _statusController;
@@ -27,6 +31,10 @@ class _InputAssetScreenState extends State<InputAssetScreen> {
   String? _selectedStatusId;
   String? _selectedLocationId;
 
+  bool _isDataInitialized = false;
+  List<CommonModel> _statuses = [];
+  List<CommonModel> _locations = [];
+
   @override
   void initState() {
     super.initState();
@@ -34,9 +42,7 @@ class _InputAssetScreenState extends State<InputAssetScreen> {
     _statusController = TextEditingController();
     _locationController = TextEditingController();
 
-    Future.microtask(() {
-      context.read<InputAssetScreenBloc>().add(FetchStatusAndLocationEvent());
-    });
+    context.read<EditAssetScreenBloc>().add(FetchAllDataEvent(widget.assetId));
   }
 
   @override
@@ -49,59 +55,72 @@ class _InputAssetScreenState extends State<InputAssetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<InputAssetScreenBloc, InputAssetScreenState>(
-      listener: (context, state) async {
-        if (state is InputAssetScreenSuccess) {
-          // refresh asset list
-          // show success message
-          // navigate back to previous screen
-          await showSuccessDialog(
-            context: context,
-            title: 'Success!',
-            message: 'Data has been submitted.',
-          );
-          context.read<AssetScreenBloc>().add(RefreshDataEvent());
-          context.pop();
-        }
-      },
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: grey200,
-          appBar: AppBar(
-            backgroundColor: grey100,
-            centerTitle: true,
-            title: Text(
-              'Input Asset',
-              style: titleLarge.copyWith(color: grey800),
-            ),
-            leading: BackButton(color: grey800),
-          ),
-          body: BlocBuilder<InputAssetScreenBloc, InputAssetScreenState>(
-            builder: (context, state) {
-              if (state is InputAssetScreenLoading) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (state is InputAssetScreenError) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: grey200,
+        appBar: AppBar(
+          backgroundColor: grey100,
+          centerTitle: true,
+          title: Text('Edit Asset', style: titleLarge.copyWith(color: grey800)),
+          leading: BackButton(color: grey800),
+        ),
+        body: BlocConsumer<EditAssetScreenBloc, EditAssetScreenState>(
+          listener: (context, state) async {
+            if (state is EditAssetScreenLoaded && !_isDataInitialized) {
+              _assetNameController.text = state.asset.name;
+              _statusController.text = state.asset.status.name;
+              _locationController.text = state.asset.location.name;
+              _selectedStatusId = state.asset.status.id;
+              _selectedLocationId = state.asset.location.id;
+              _statuses = state.statuses;
+              _locations = state.locations;
+              _isDataInitialized = true;
+            }
+
+            if (state is EditAssetScreenDeleteSuccess) {
+              context.read<AssetScreenBloc>().add(RefreshDataEvent());
+              await showSuccessDialog(
+                context: context,
+                title: 'Success!',
+                message: 'Data has been deleted.',
+              );
+              context.pop();
+            } else if (state is EditAssetScreenUpdateSuccess) {
+              context.read<AssetScreenBloc>().add(RefreshDataEvent());
+              await showSuccessDialog(
+                context: context,
+                title: 'Success!',
+                message: 'Data has been updated.',
+              );
+              context.pop();
+            }
+          },
+          builder: (context, state) {
+            if (!_isDataInitialized) {
+              if (state is EditAssetScreenError) {
                 return ErrorScreen(
                   message: state.message,
                   onRetry: () {
-                    context.read<InputAssetScreenBloc>().add(
-                      FetchStatusAndLocationEvent(),
+                    context.read<EditAssetScreenBloc>().add(
+                      FetchAllDataEvent(widget.assetId),
                     );
                   },
                 );
-              } else if (state is InputAssetScreenLoaded) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+              }
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            return Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 22, top: 18),
                           child: Text(
-                            'Fill this form\nbelow',
+                            'Edit this form\nbelow',
                             style: headlineMedium1.copyWith(color: grey800),
                           ),
                         ),
@@ -137,13 +156,11 @@ class _InputAssetScreenState extends State<InputAssetScreen> {
                                 AutocompleteTextFormField(
                                   controller: _statusController,
                                   hintText: 'Select status',
-                                  suggestions: state.statuses,
+                                  suggestions: _statuses,
                                   onSuggestionSelected: (String selection) {
-                                    // set selected status id
                                     setState(() {
                                       _selectedStatusId = selection;
-
-                                      _statusController.text = state.statuses
+                                      _statusController.text = _statuses
                                           .firstWhere(
                                             (element) =>
                                                 element.id == selection,
@@ -155,9 +172,8 @@ class _InputAssetScreenState extends State<InputAssetScreen> {
                                     if (value == null || value.isEmpty) {
                                       return 'This form is required';
                                     }
-                                    // only allow values from the predefined list
-                                    if (!state.statuses.any(
-                                      (element) => element.name == value,
+                                    if (!_statuses.any(
+                                      (e) => e.name == value,
                                     )) {
                                       return 'Please select a valid status from the list.';
                                     }
@@ -173,13 +189,11 @@ class _InputAssetScreenState extends State<InputAssetScreen> {
                                 AutocompleteTextFormField(
                                   controller: _locationController,
                                   hintText: 'Select location',
-                                  suggestions: state.locations,
+                                  suggestions: _locations,
                                   onSuggestionSelected: (String selection) {
-                                    // set selected location id
                                     setState(() {
                                       _selectedLocationId = selection;
-
-                                      _locationController.text = state.locations
+                                      _locationController.text = _locations
                                           .firstWhere(
                                             (element) =>
                                                 element.id == selection,
@@ -191,11 +205,10 @@ class _InputAssetScreenState extends State<InputAssetScreen> {
                                     if (value == null || value.isEmpty) {
                                       return 'This form is required';
                                     }
-                                    // only allow values from the predefined list
-                                    if (!state.locations.any(
-                                      (element) => element.name == value,
+                                    if (!_locations.any(
+                                      (e) => e.name == value,
                                     )) {
-                                      return 'Please select a valid status from the list.';
+                                      return 'Please select a valid location from the list.';
                                     }
                                     return null;
                                   },
@@ -206,51 +219,63 @@ class _InputAssetScreenState extends State<InputAssetScreen> {
                         ),
                       ],
                     ),
-
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 26,
-                        vertical: 36,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 26,
+                    vertical: 36,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: SecondaryButton(
+                          width: double.infinity,
+                          onPressed: () {
+                            showNormalDialog(
+                              context: context,
+                              title: 'Confirmation',
+                              message:
+                                  'Your action will cause this data\npermanently deleted.',
+                              primaryButtonText: 'Delete',
+                              onPrimaryButtonPressed: () {
+                                context.read<EditAssetScreenBloc>().add(
+                                  DeleteAssetEvent(widget.assetId),
+                                );
+                              },
+                              secondaryButtonText: 'Cancel',
+                            );
+                          },
+                          child: const Text('Delete'),
+                        ),
                       ),
-                      child:
-                          BlocBuilder<
-                            InputAssetScreenBloc,
-                            InputAssetScreenState
-                          >(
-                            builder: (context, state) {
-                              if (state is InputAssetScreenSubmitLoading) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              } else {
-                                return PrimaryButton(
-                                  onPressed: () {
-                                    if (_formKey.currentState!.validate() &&
-                                        _selectedLocationId != null &&
-                                        _selectedStatusId != null) {
-                                      context.read<InputAssetScreenBloc>().add(
-                                        OnSubmitButtonPressedEvent(
-                                          name: _assetNameController.text,
-                                          statusId: _selectedStatusId!,
-                                          locationId: _selectedLocationId!,
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  width: double.infinity,
-                                  child: Text('Submit'),
-                                );
-                              }
-                            },
-                          ),
-                    ),
-                  ],
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            },
-          ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: PrimaryButton(
+                          width: double.infinity,
+                          onPressed: () {
+                            if (_formKey.currentState!.validate() &&
+                                _selectedLocationId != null &&
+                                _selectedStatusId != null) {
+                              context.read<EditAssetScreenBloc>().add(
+                                UpdateAssetEvent(
+                                  assetId: widget.assetId,
+                                  name: _assetNameController.text,
+                                  statusId: _selectedStatusId!,
+                                  locationId: _selectedLocationId!,
+                                ),
+                              );
+                            }
+                          },
+                          child: const Text('Save Update'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

@@ -9,6 +9,8 @@ abstract class AssetScreenEvent extends Equatable {
 
 class FetchDataEvent extends AssetScreenEvent {}
 
+class RefreshDataEvent extends AssetScreenEvent {}
+
 class OnSearchEvent extends AssetScreenEvent {
   final String query;
 

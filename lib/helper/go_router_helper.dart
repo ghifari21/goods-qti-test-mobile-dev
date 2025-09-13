@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:goods/data/services/shared_preferences_service.dart';
 import 'package:goods/di/injection.dart';
+import 'package:goods/ui/screens/edit_asset_screen.dart';
 import 'package:goods/ui/screens/home_screen.dart';
 import 'package:goods/ui/screens/input_asset_screen.dart';
 import 'package:goods/ui/screens/login_screen.dart';
@@ -62,6 +63,14 @@ class GoRouterHelper {
             path: 'input-asset',
             name: AppRoute.inputAsset.name,
             builder: (context, state) => InputAssetScreen(),
+          ),
+          GoRoute(
+            path: 'edit-asset/:id',
+            name: AppRoute.editAsset.name,
+            builder: (context, state) {
+              final id = state.pathParameters['id'] ?? '';
+              return EditAssetScreen(assetId: id);
+            },
           ),
         ],
       ),

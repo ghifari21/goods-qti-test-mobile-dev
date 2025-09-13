@@ -247,6 +247,13 @@ class ApiService {
 
       if (response.statusCode == 201) {
         return AssetGeneralResponse.fromJson(response.data);
+      } else if (response.statusCode == 200) {
+        return AssetGeneralResponse.fromJson({
+          'id': id,
+          'name': name,
+          'status_id': statusId,
+          'location_id': locationId,
+        });
       } else {
         throw Exception(
           'Failed to update asset: ${response.statusCode} ${response.statusMessage}',
@@ -262,7 +269,7 @@ class ApiService {
       // content-type: application/json
       final response = await _dio.delete('asset/$id');
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 204) {
         return 'Success';
       } else {
         throw Exception(

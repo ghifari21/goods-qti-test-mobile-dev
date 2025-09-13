@@ -64,7 +64,10 @@ class InputAssetScreenBloc
 
     createResult.fold(
       (failure) => emit(InputAssetScreenError(failure.message)),
-      (_) => emit(InputAssetScreenSuccess()),
+      (_) {
+        emit(InputAssetScreenSuccess());
+        add(FetchStatusAndLocationEvent());
+      },
     );
   }
 }

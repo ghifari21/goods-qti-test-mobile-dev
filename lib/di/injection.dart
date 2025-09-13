@@ -24,6 +24,7 @@ import 'package:goods/domain/usecases/search_assets_use_case.dart';
 import 'package:goods/domain/usecases/update_asset_use_case.dart';
 import 'package:goods/helper/go_router_helper.dart';
 import 'package:goods/ui/blocs/asset/asset_screen_bloc.dart';
+import 'package:goods/ui/blocs/edit/edit_asset_screen_bloc.dart';
 import 'package:goods/ui/blocs/home/home_screen_bloc.dart';
 import 'package:goods/ui/blocs/input/input_asset_screen_bloc.dart';
 import 'package:goods/ui/blocs/login/login_screen_bloc.dart';
@@ -118,6 +119,15 @@ Future<void> setupLocator() async {
       getAllLocationsUseCase: getIt(),
       getAllStatusesUseCase: getIt(),
       createAssetUseCase: getIt(),
+    ),
+  );
+  getIt.registerFactory(
+    () => EditAssetScreenBloc(
+      getDetailAssetUseCase: getIt(),
+      getAllLocationsUseCase: getIt(),
+      getAllStatusesUseCase: getIt(),
+      updateAssetUseCase: getIt(),
+      deleteAssetUseCase: getIt(),
     ),
   );
 }

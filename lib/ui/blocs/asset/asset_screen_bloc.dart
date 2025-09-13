@@ -17,6 +17,7 @@ class AssetScreenBloc extends Bloc<AssetScreenEvent, AssetScreenState> {
     required this.searchAssetsUseCase,
   }) : super(AssetScreenState()) {
     on<OnSearchEvent>(_onSearchEvent);
+    on<RefreshDataEvent>(_refreshDataEvent);
     on<FetchDataEvent>(_onFetchDataEvent);
   }
 
@@ -83,5 +84,13 @@ class AssetScreenBloc extends Bloc<AssetScreenEvent, AssetScreenState> {
         }
       },
     );
+  }
+
+  void _refreshDataEvent(
+    RefreshDataEvent event,
+    Emitter<AssetScreenState> emit,
+  ) async {
+    emit(const AssetScreenState());
+    add(FetchDataEvent());
   }
 }

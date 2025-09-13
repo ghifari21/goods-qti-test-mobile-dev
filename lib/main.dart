@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:goods/di/injection.dart';
 import 'package:goods/helper/go_router_helper.dart';
 import 'package:goods/ui/blocs/asset/asset_screen_bloc.dart';
+import 'package:goods/ui/blocs/edit/edit_asset_screen_bloc.dart';
 import 'package:goods/ui/blocs/home/home_screen_bloc.dart';
 import 'package:goods/ui/blocs/input/input_asset_screen_bloc.dart';
 import 'package:goods/ui/blocs/login/login_screen_bloc.dart';
@@ -23,6 +24,7 @@ void main() async {
         BlocProvider(create: (context) => getIt<AssetScreenBloc>()),
         BlocProvider(create: (context) => getIt<SplashScreenBloc>()),
         BlocProvider(create: (context) => getIt<InputAssetScreenBloc>()),
+        BlocProvider(create: (context) => getIt<EditAssetScreenBloc>()),
       ],
       child: MyApp(),
     ),
