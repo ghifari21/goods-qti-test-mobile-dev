@@ -4,7 +4,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:goods/di/injection.dart';
 import 'package:goods/helper/go_router_helper.dart';
+import 'package:goods/helper/workmanager_helper.dart';
 import 'package:goods/ui/blocs/home/home_screen_bloc.dart';
 import 'package:goods/ui/screens/asset_screen.dart';
 import 'package:goods/ui/screens/error_screen.dart';
@@ -35,8 +37,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
+    Future.microtask(() async {
       context.read<HomeScreenBloc>().add(FetchHomeDataEvent());
+
+      await getIt<WorkmanagerHelper>().runPeriodicTask();
     });
   }
 

@@ -23,6 +23,7 @@ import 'package:goods/domain/usecases/logout_use_case.dart';
 import 'package:goods/domain/usecases/search_assets_use_case.dart';
 import 'package:goods/domain/usecases/update_asset_use_case.dart';
 import 'package:goods/helper/go_router_helper.dart';
+import 'package:goods/helper/workmanager_helper.dart';
 import 'package:goods/ui/blocs/asset/asset_screen_bloc.dart';
 import 'package:goods/ui/blocs/edit/edit_asset_screen_bloc.dart';
 import 'package:goods/ui/blocs/home/home_screen_bloc.dart';
@@ -37,6 +38,11 @@ final getIt = GetIt.instance;
 Future<void> setupLocator() async {
   // go router
   getIt.registerLazySingleton<GoRouterHelper>(() => GoRouterHelper());
+
+  // workmanager
+  getIt.registerLazySingleton<WorkmanagerHelper>(
+    () => WorkmanagerHelper()..init(),
+  );
 
   // shared prefs instance
   final prefs = await SharedPreferences.getInstance();
