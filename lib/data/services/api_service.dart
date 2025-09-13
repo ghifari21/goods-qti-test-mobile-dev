@@ -139,7 +139,7 @@ class ApiService {
   Future<GeneralResponse> getAllLocations() async {
     try {
       // content-type: application/json
-      final response = await _dio.get('locations/');
+      final response = await _dio.get('location/');
 
       if (response.statusCode == 200) {
         return GeneralResponse.fromJson(response.data);

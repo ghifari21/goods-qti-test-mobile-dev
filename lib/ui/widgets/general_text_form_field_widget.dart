@@ -5,7 +5,7 @@ import 'package:goods/ui/theme/text_styles.dart';
 class GeneralTextFormField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
-  final IconData prefixIcon;
+  final IconData? prefixIcon;
   final String? Function(String?)? validator;
   final TextInputType keyboardType;
   final bool obscureText;
@@ -14,7 +14,7 @@ class GeneralTextFormField extends StatefulWidget {
     super.key,
     required this.controller,
     required this.hintText,
-    required this.prefixIcon,
+    this.prefixIcon = null,
     this.validator,
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
@@ -43,7 +43,9 @@ class _GeneralTextFormFieldState extends State<GeneralTextFormField> {
       decoration: InputDecoration(
         hintText: widget.hintText,
         hintStyle: bodyMedium.copyWith(color: grey700),
-        prefixIcon: Icon(widget.prefixIcon, color: grey700),
+        prefixIcon: widget.prefixIcon != null
+            ? Icon(widget.prefixIcon, color: primary600)
+            : null,
         // Show suffix icon only for password fields
         suffixIcon: widget.obscureText
             ? IconButton(

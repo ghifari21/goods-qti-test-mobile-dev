@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:goods/data/services/shared_preferences_service.dart';
 import 'package:goods/di/injection.dart';
 import 'package:goods/ui/screens/home_screen.dart';
+import 'package:goods/ui/screens/input_asset_screen.dart';
 import 'package:goods/ui/screens/login_screen.dart';
 import 'package:goods/ui/screens/splash_screen.dart';
 import 'package:goods/ui/screens/unknown_screen.dart';
@@ -56,7 +57,13 @@ class GoRouterHelper {
         path: '/home',
         name: AppRoute.home.name,
         builder: (context, state) => HomeScreen(),
-        routes: [],
+        routes: [
+          GoRoute(
+            path: 'input-asset',
+            name: AppRoute.inputAsset.name,
+            builder: (context, state) => InputAssetScreen(),
+          ),
+        ],
       ),
     ],
   );

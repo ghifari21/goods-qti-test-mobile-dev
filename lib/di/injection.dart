@@ -25,6 +25,7 @@ import 'package:goods/domain/usecases/update_asset_use_case.dart';
 import 'package:goods/helper/go_router_helper.dart';
 import 'package:goods/ui/blocs/asset/asset_screen_bloc.dart';
 import 'package:goods/ui/blocs/home/home_screen_bloc.dart';
+import 'package:goods/ui/blocs/input/input_asset_screen_bloc.dart';
 import 'package:goods/ui/blocs/login/login_screen_bloc.dart';
 import 'package:goods/ui/blocs/splash/splash_screen_bloc.dart';
 import 'package:goods/utils/auth_interceptor.dart';
@@ -111,5 +112,12 @@ Future<void> setupLocator() async {
   );
   getIt.registerFactory(
     () => SplashScreenBloc(prefs: getIt(), generateToken: getIt()),
+  );
+  getIt.registerFactory(
+    () => InputAssetScreenBloc(
+      getAllLocationsUseCase: getIt(),
+      getAllStatusesUseCase: getIt(),
+      createAssetUseCase: getIt(),
+    ),
   );
 }
